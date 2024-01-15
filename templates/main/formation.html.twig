@@ -1,0 +1,52 @@
+{% extends 'base.html.twig' %}
+
+{% block body %}
+
+{# Ce code permet d'afficher les message de validation passer par la methode flash du controlleur #}
+{% for message in app.flashes('message') %}
+        <div class="alert alert-success">
+            {{ message }}
+        </div>
+    {% endfor %}
+
+
+<div class="container-sm">
+    <div class="mt-4">
+        <div class="mb-4">
+        
+            {# Utilisation du meme form pour creation et modification #}
+            <h1>
+                {{form.vars.data.id is null ? 'Creer Formation' : 'modifier Formation'}}
+            </h1>
+        </div>
+        {{form_start(form)}}
+        <div class="form-group mt-2">
+            <label for="formGroupExampleInput" class="form-label">Nom : </label>
+            {{form_widget(form.nom,{'attr':{'class':'form-control','placeholder':'Entrer le nom de la formation'}})}}
+        </div>
+
+        <div class="form-group mt-2">
+            <label for="formGroupExampleInput" class="form-label">Volume Horaire : </label>
+            {{form_widget(form.volume_horaire,{'attr':{'class':'form-control','placeholder':'Entrer le volume horaire du formation'}})}}
+        </div>
+
+
+        <div class="form-group mt-2">
+            <label for="formGroupExampleInput" class="form-label">Ecoles : </label>
+        </div>
+
+        <div class="mt-2 ml-4">
+            {{ form_widget(form.ecole,{'attr':{'class':'form-control'}})}}
+        </div>
+
+        <div class="mt-2">
+            <button type="submit" class="btn btn-primary mt-2">
+                {{form.vars.data.id is null ? 'Sauvegarder Formation' : 'Modifier Formation'}}
+            </button>
+        </div>
+        
+        {{form_end(form)}}
+</div>
+</div>
+
+{% endblock %}

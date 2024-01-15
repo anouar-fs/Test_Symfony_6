@@ -1,0 +1,108 @@
+{% extends 'base.html.twig' %}
+
+{% block body %}
+    {% for message in app.flashes('message') %}
+        <div class="alert alert-success">
+            {{ message }}
+        </div>
+    {% endfor %}
+
+<div class="container-sm">
+<div class="mt-4">
+    <div class="mb-4">
+        <h1>Listes des Formations</h1>
+    </div>
+    <table class="table">
+        <thead>
+            <tr>
+                <th scope="col">#</th>
+                <th scope="col">nom</th>
+                <th scope="col">volume horaire</th>
+                <th scope="col">Actions</th>
+            </tr>
+        </thead>
+        <tbody id="bodyTable">
+                <tr>
+                    <td colspan="5" class="text-center h-50">
+                        <div class="spinner-border" role="status">
+                            <span class="visually-hidden">Loading...</span>
+                        </div>
+                    </td>
+                </tr>
+            </tbody>
+    </table>
+
+    </div>
+    </div>
+
+    <script>
+
+
+
+
+        document.addEventListener('DOMContentLoaded', fetchData);
+
+
+        // Fonction pour supprimer une formation
+        function deleteFormation(id) {
+            if (confirm("Êtes-vous sûr de vouloir supprimer cette formation?")) {
+                // Envoyer la requête
+                fetch(`/delete-formation/${id}`, {
+                    method: 'DELETE',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                })
+                .then(response => response.json())
+                .then(data => {
+                    // Traiter la réponse JSON
+                    if (data.success) {
+                        fetchData()
+                    } else {
+                        alert("Une erreur s'est produite lors de la suppression de la formation.");
+                    }
+                })
+                .catch(error => {
+                    console.error('Erreur lors de la suppression de la formation:', error);
+                });
+            }
+        }
+
+
+
+
+        function fetchData() {
+            fetch('/GetData')
+                .then(response => response.json())
+                .then(data => {
+
+                    updateTable(data);
+                })
+                .catch(error => console.error('Error fetching data:', error));
+        }
+
+
+
+
+
+        function updateTable(formations) {
+            const bodyTable = document.getElementById('bodyTable');
+            bodyTable.innerHTML = ''; 
+            
+            
+            formations.forEach((formation, index) => {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <th scope="row">${index + 1}</th>
+                    <td>${formation.nom}</td>
+                    <td>${formation.VolumeHoraire}</td>
+                    <td>
+                        <a href="/edit-formation/${formation.id}" class="btn btn-success">Edit</a>
+                        <button class="btn btn-danger" onclick="deleteFormation(${formation.id})">Delete</button>
+                    </td>
+                `;
+                bodyTable.appendChild(row);
+    });
+}
+    </script>
+{% endblock %}

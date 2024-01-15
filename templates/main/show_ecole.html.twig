@@ -1,0 +1,117 @@
+{% extends 'base.html.twig' %}
+
+{# La vue qui permet de visualiser la liste des ecoles #}
+    {% block body %}
+        {% for message in app.flashes('message') %}
+            <div class="alert alert-success">
+                {{ message }}
+            </div>
+    {% endfor %}
+
+
+
+
+<div class="container-sm">
+<div class="mt-4">
+
+    
+    <div class="mb-4">
+        <h1>Listes des Ecoles</h1>
+    </div>
+
+    <table class="table">
+
+        <thead>
+            <tr>
+                <th scope="col">#</th>
+                <th scope="col">nom</th>
+                <th scope="col">Adresse</th>
+                <th scope="col">Nombre de formation</th>
+                <th scope="col">Actions</th>
+            </tr>
+        </thead>
+
+        {# //LOAder #}
+        <tbody id="bodyTable">
+                <tr>
+                    <td colspan="5" class="text-center h-50">
+                        <div class="spinner-border" role="status">
+                            <span class="visually-hidden">Loading...</span>
+                        </div>
+                    </td>
+                </tr>
+            </tbody>
+    </table>
+
+    </div>
+    </div>
+    <script>
+
+        document.addEventListener('DOMContentLoaded', fetchData);
+
+
+         // Fonction pour supprimer une formation
+        function deleteEcole(id) {
+            if (confirm("Êtes-vous sûr de vouloir supprimer cette Ecole?")) {
+                // Envoyer la requête
+                fetch(`/delete-ecole/${id}`, {
+                    method: 'DELETE',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                })
+                .then(response => response.json())
+                .then(data => {
+                        // Traiter la réponse JSON
+                        if (data.success) {
+                        fetchData()
+                    } else {
+                        alert("Une erreur s'est produite lors de la suppression de l' ecole'.");
+                    }
+                })
+                .catch(error => {
+                    console.error('Erreur lors de la suppression de l ecole:', error);
+                });
+            }
+        }
+
+
+
+
+//fetcher les donnees formation en utilisant /GetEcole
+function fetchData() {
+    fetch('/GetEcole')
+        .then(response => response.json())
+        .then(data => {
+            
+            updateTable(data);
+        })
+        .catch(error => console.error('Error fetching data:', error));
+}
+
+
+
+
+
+    function updateTable(ecoles) {
+        const bodyTable = document.getElementById('bodyTable');
+            bodyTable.innerHTML = ''; // vide le contenu loader du table 
+
+            // parcourir les ecoles 
+            ecoles.forEach((ecole, index) => {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <th scope="row">${index + 1}</th>
+                    <td>${ecole.nom}</td>
+                    <td>${ecole.Adresse}</td>
+                    <td>${ecole.formations.length}</td>
+                    <td>
+                        <a href="/edit-ecole/${ecole.id}" class="btn btn-success">Edit</a>
+                        <button class="btn btn-danger" onclick="deleteEcole(${ecole.id})">Delete</button>
+                    </td>
+                `;
+                bodyTable.appendChild(row);
+            });
+}
+    </script>
+{% endblock %}

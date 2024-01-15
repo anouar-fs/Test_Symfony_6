@@ -1,0 +1,40 @@
+{% extends 'base.html.twig' %}
+
+{% block body %}
+
+{# Ce code permet d'afficher les message de validation passer par la methode flash du controlleur #}
+{% for message in app.flashes('message') %}
+        <div class="alert alert-success">
+            {{ message }}
+        </div>
+    {% endfor %}
+
+<div class="container-sm">
+<div class="mt-4">
+<div class="mt-4">
+        <div class="mb-4">
+            {# Utilisation du meme form pour creation et modification #}
+            <h1>{{form.vars.data.id is null ? 'Creer Ecole' : 'modifier Ecole'}}</h1>
+        </div>
+        {{form_start(form)}}
+        <div class="form-group">
+            <label for="formGroupExampleInput" class="form-label">Nom : </label>
+            {{form_widget(form.nom,{'attr':{'class':'form-control','placeholder':'Saisir le nom de l ecole'}})}}
+        </div>
+
+        <div class="form-group">
+            <label for="formGroupExampleInput" class="form-label">Adresse : </label>
+            {{form_widget(form.adresse,{'attr':{'class':'form-control','placeholder':'Saisir l adresse de l ecole'}})}}
+        </div>
+    
+        </div>
+        
+        <button type="submit" class="btn btn-primary mt-2">
+            {{form.vars.data.id is null ? 'Sauvegarder Ecole' : 'Modifer Ecole'}}
+        </button>
+        
+    {{form_end(form)}}
+</div>
+</div>
+
+{% endblock %}

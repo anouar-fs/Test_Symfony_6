@@ -1,0 +1,87 @@
+{% extends 'base.html.twig' %}
+
+{% block body %}
+
+
+
+
+<div class="container-sm">
+    <div class="mt-4">
+        <div class="mb-4">
+        <h1>Les Relations</h1>
+        </div>
+            <table class="table">
+            <thead>
+                <tr>
+                    <th scope="col">#</th>
+                    <th scope="col">nom</th>
+                    <th scope="col">Adresse</th>
+                    <th scope="col">formations</th>
+                </tr>
+            </thead>
+            {# Un loader qui s'affiche lors du chargement des donnee  #}
+            <tbody id="bodyTable">
+                    <tr>
+                        <td colspan="5" class="text-center h-50">
+                            <div class="spinner-border" role="status">
+                                <span class="visually-hidden">Loading...</span>
+                            </div>
+                        </td>
+                    </tr>
+                </tbody>
+        </table>
+
+</div>
+</div>
+
+
+
+
+<script>
+
+// l'utilisation de la fonction fetchdata lors du chargement de la page la premiere fois
+document.addEventListener('DOMContentLoaded', fetchData);
+
+
+
+
+function fetchData() {
+    fetch('/GetEcole')
+        .then(response => response.json())
+        .then(data => {
+            updateTable(data);
+        })
+        .catch(error => console.error('Error fetching data:', error));
+}
+
+
+
+
+    // Remlissage du table avec les données de la fonction fetchdata au lieu du loader
+    function updateTable(ecoles) {
+        const bodyTable = document.getElementById('bodyTable');
+        bodyTable.innerHTML = ''; 
+
+        ecoles.forEach((ecole, index) => {
+            const row = document.createElement('tr');
+            let html1=`
+                <th scope="row">${index + 1}</th>
+                <td>${ecole.nom}</td>
+                <td>${ecole.Adresse}</td>
+                <td>
+            `;
+            let html2 = ''
+            ecole.formations.forEach((formation, index) => {
+                html2 += `
+                    <li>${formation.name}</li>
+                `
+            })
+            html2 +='</td>'
+            row.innerHTML = (html1+html2);
+            bodyTable.appendChild(row);
+        });
+    }
+
+
+    </script>
+{% endblock %}
